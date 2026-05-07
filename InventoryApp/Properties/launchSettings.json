@@ -7,7 +7,9 @@
         "launchBrowser": true,
         "applicationUrl": "http://localhost:5260",
         "environmentVariables": {
-          "ASPNETCORE_ENVIRONMENT": "Development"
+          "ASPNETCORE_ENVIRONMENT": "Development",
+          "DefaultConnection": "Server=localhost;Port=5432;Database=postgres;Userid=postgres;Password=postgres",
+          "ExternalConnection": "Server=dpg-d7u4v15ckfvc73ekn1og-a.oregon-postgres.render.com;Port=5432;Database=postgressql_gdh4;Userid=postgressql_gdh4_user;Password=s30HSMNe5pZCpTNGVuU4dEHqRiUB6R7c"
         }
       },
       "https": {
@@ -16,7 +18,9 @@
         "launchBrowser": true,
         "applicationUrl": "https://localhost:7105;http://localhost:5260",
         "environmentVariables": {
-          "ASPNETCORE_ENVIRONMENT": "Development"
+          "ASPNETCORE_ENVIRONMENT": "Development",
+          "DefaultConnection": "Server=localhost;Port=5432;Database=postgres;Userid=postgres;Password=postgres",
+          "ExternalConnection": "Server=dpg-d7u4v15ckfvc73ekn1og-a.oregon-postgres.render.com;Port=5432;Database=postgressql_gdh4;Userid=postgressql_gdh4_user;Password=s30HSMNe5pZCpTNGVuU4dEHqRiUB6R7c"
         }
       }
     }

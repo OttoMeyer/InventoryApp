@@ -206,3 +206,4 @@ C:\Users\Otto\RiderProjects\InventoryApp\InventoryApp\obj\Debug\net10.0\Inventor
 C:\Users\Otto\RiderProjects\InventoryApp\InventoryApp\obj\Debug\net10.0\ref\InventoryApp.dll
 C:\Users\Otto\RiderProjects\InventoryApp\InventoryApp\bin\Debug\net10.0\Npgsql.dll
 C:\Users\Otto\RiderProjects\InventoryApp\InventoryApp\bin\Debug\net10.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
+C:\Users\Otto\RiderProjects\InventoryApp\InventoryApp\obj\Debug\net10.0\InventoryApp.sourcelink.json
