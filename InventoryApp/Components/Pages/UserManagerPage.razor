@@ -1,0 +1,154 @@
+﻿@page "/UserManager"
+
+@rendermode InteractiveServer
+
+@using Microsoft.AspNetCore.Identity
+@using InventoryApp.Data
+
+
+@inject UserManager<ApplicationUser> UserManager
+
+
+<PageTitle>User List</PageTitle>
+
+<h1>User List</h1>
+
+<div class="row row-cols-auto">
+    <div class="col btn-group" role="group" aria-label="Basic example">
+        <button type="button" class="btn btn-primary" @onclick="BlockUsers"><i class="bi bi-lock-fill"></i> Block</button>
+        <button type="button" class="btn btn-primary" @onclick="UnblockUsers"><i class="bi bi-unlock-fill"></i></button>
+        <button type="button" class="btn btn-danger" @onclick="DeleteUsers"><i class="bi bi-trash-fill"></i></button>
+    </div>
+</div>
+
+@if (usersList == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <td class="col-1"></td>
+            <th class="col-2">Name</th>
+            <th class="col-3">Email</th>
+            <th class="col-3">Last Login</th>
+            <th class="col-3">Status</th>
+        </tr>
+        </thead>
+        <tbody class="table-group-divider">
+        @foreach (var userDataType in usersList)
+        { 
+            <tr>
+                <td><input class="form-check-input" 
+                           type="checkbox" 
+                           id="checkboxNoLabel" 
+                           checked="@selectedUsers.Contains(userDataType)" 
+                           aria-label="..." 
+                           @oninput="() => ChangeState(userDataType)"></td>
+                <td>@userDataType.UserName</td>
+                <td>@userDataType.Email</td>
+                <td>@userDataType.Id</td>
+                <td></td>
+            </tr>
+        }
+
+        </tbody>
+    </table>
+}
+
+@code {
+    private readonly ApplicationDbContext _dbContext;
+    
+    
+    List<ApplicationUser> usersList = [];
+    HashSet<ApplicationUser> selectedUsers = new HashSet<ApplicationUser>();
+
+    public UserManagerPage(ApplicationDbContext dbContext)
+    {
+        _dbContext = dbContext;
+        
+    }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUsers();
+    }
+
+    private async Task LoadUsers()
+    {
+        var x = _dbContext.Users;
+        usersList = x.ToList();
+        Console.WriteLine("===============================");
+        var dbContextRoles = _dbContext.UserRoles.ToList();
+        foreach (var role in dbContextRoles)
+        {
+            
+            //user.UserId;
+        }
+        Console.WriteLine("===============================");
+        
+        //using var conn = await _connectionFactory.CreateConnectionAsync();
+        //var rows = await conn.QueryAsync<UserInformation>("SELECT * FROM test_table");
+        //usersList = rows.ToList();
+    } 
+    
+    private void ChangeState(ApplicationUser user)
+    {
+        if (selectedUsers.Contains(user))
+        {
+            selectedUsers.Remove(user);
+        }
+        else
+        {
+            selectedUsers.Add(user);
+        }
+    }
+
+    private async void BlockUsers()
+    {
+        foreach (var user in selectedUsers)
+        {
+            //user.Status = "Block";
+            //var conn = _connectionFactory.CreateConnection();
+            //conn.Execute("UPDATE test_table SET Status = 'Block' WHERE Email = @Email;", new { Email = user.Email });
+        }
+        selectedUsers.Clear();
+        StateHasChanged();
+    }
+    
+    private async void UnblockUsers()
+    {
+        foreach (var user in selectedUsers)
+        {
+            //user.Status = "Active";
+            //var conn = _connectionFactory.CreateConnection();
+            //conn.Execute("UPDATE test_table SET Status = 'Block' WHERE Email = @Email;", new { Email = user.Email });
+        }
+        selectedUsers.Clear();
+        StateHasChanged();
+    }
+    
+    private void DeleteUsers()
+    {
+        foreach (var user in selectedUsers)
+        {
+            var u = _dbContext.Users.Find(user.Id);
+            if (u != null)
+            {
+                _dbContext.Users.Remove(u);
+            }
+            //usersList.Remove(user);
+            //var conn = _connectionFactory.CreateConnection();
+            //conn.Execute("DELETE FROM test_table WHERE Email = @Email;", new { Email = user.Email });
+        }
+
+        _dbContext.SaveChanges();
+        selectedUsers.Clear();
+        StateHasChanged();
+    }
+    
+} 

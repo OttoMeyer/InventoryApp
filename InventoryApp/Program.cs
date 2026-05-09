@@ -24,7 +24,7 @@ builder.Services.AddAuthentication(options =>
     })
     .AddIdentityCookies();
 
-var connectionString = Environment.GetEnvironmentVariable("ExternalConnection");
+var connectionString = Environment.GetEnvironmentVariable("DefaultConnection");
 //var connectionString = builder.Configuration.GetConnectionString("ExternalConnection") ??
 //                       throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
