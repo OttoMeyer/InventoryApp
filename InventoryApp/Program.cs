@@ -24,9 +24,9 @@ builder.Services.AddAuthentication(options =>
     })
     .AddIdentityCookies();
 
-var connectionString = Environment.GetEnvironmentVariable("DefaultConnection");
-//var connectionString = builder.Configuration.GetConnectionString("ExternalConnection") ??
-//                       throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+//var connectionString = Environment.GetEnvironmentVariable("DefaultConnection");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
+                       throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
@@ -77,11 +77,12 @@ if (app.Environment.IsDevelopment())
     
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    /*
     var user = db.Users.FirstOrDefault(u => u.UserName == "admin@mail.com");
     await userManager.AddToRoleAsync(user, Roles.Admin);
     var x = await userManager.GetRolesAsync(user);
     x.ToList().ForEach(role => Console.WriteLine($"{role}"));
-    
+    */
 
 }
 else

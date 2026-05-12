@@ -1,0 +1,182 @@
+﻿@page "/InventoryManager"
+
+
+@using Microsoft.AspNetCore.Authorization
+
+@rendermode InteractiveServer
+
+@using Microsoft.AspNetCore.Identity
+@using InventoryApp.Data
+
+
+@inject UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthStateProvider
+@attribute [Authorize]
+
+
+<PageTitle>Inventory Manager</PageTitle>
+
+<h1>Inventory Manager</h1>
+
+<EditForm EditContext="editContext" method="post" OnSubmit="CreateInventory" FormName="login">
+    <InputText @bind-Value="Input.Name" id="Input.Email" class="form-control"  aria-required="true" placeholder="Name"/>
+    <InputText @bind-Value="Input.Description" id="Input.Description" class="form-control"  aria-required="true" placeholder="Description"/>
+    <button type="submit" class="w-100 btn btn-lg btn-primary">Create</button>
+</EditForm>
+
+<div class="row row-cols-auto">
+    <div class="col btn-group" role="group" aria-label="Basic example">
+        <button type="button" class="btn btn-primary" @onclick="DeleteUsers"><i class="bi bi-lock-fill"></i> Block</button>
+        <button type="button" class="btn btn-primary" @onclick="DeleteUsers"><i class="bi bi-unlock-fill"></i></button>
+        <button type="button" class="btn btn-danger" @onclick="DeleteUsers"><i class="bi bi-trash-fill"></i></button>
+    </div>
+</div>
+
+@if (inventoryList == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <td class="col-1"></td>
+            <th class="col-2">Id</th>
+            <th class="col-3">Owner</th>
+            <th class="col-3">Name</th>
+            <th class="col-3">Description</th>
+        </tr>
+        </thead>
+        <tbody class="table-group-divider">
+        @foreach (var inventory in displayList)
+        { 
+            <tr>
+                <td><input class="form-check-input" 
+                           type="checkbox" 
+                           id="checkboxNoLabel" 
+                           checked="@selectedInventory.Contains(inventory.ThisInventory)" 
+                           aria-label="..." 
+                           @oninput="() => ChangeState(inventory.ThisInventory)"></td>
+                <td>@inventory.ID</td>
+                <td>@inventory.Owner</td>
+                <td>@inventory.Name</td>
+                <td>@inventory.Description</td>
+            </tr>
+        }
+
+        </tbody>
+    </table>
+}
+
+
+
+
+@code {
+    
+    private EditContext editContext = default!;
+    private readonly ApplicationDbContext _dbContext;
+    
+    List<Inventory> inventoryList = [];
+    List<DisplayModel> displayList = [];
+    HashSet<Inventory> selectedInventory = new HashSet<Inventory>();
+    
+    [SupplyParameterFromForm] private InputModel Input { get; set; } = default!;
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
+
+    public InventoryManagerPage(ApplicationDbContext dbContext)
+    {
+        _dbContext = dbContext;
+        
+    }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        Input ??= new();
+
+        editContext = new EditContext(Input);
+        LoadUsers();
+    }
+
+    private async Task LoadUsers()
+    {
+        var x = _dbContext.Inventories;
+        inventoryList = x.ToList();
+        foreach (var y in inventoryList)
+        {
+            var owner = await _dbContext.Users.FindAsync(y.OwnerID);
+            displayList.Add(new DisplayModel
+            {
+                ID = y.InventoryID,
+                Owner = owner.UserName,
+                Name = y.InventoryName,
+                Description = y.Description,
+                ThisInventory = y
+            });
+        }
+        StateHasChanged();
+    }
+    
+    private void ChangeState(Inventory inventory)
+    {
+        if (selectedInventory.Contains(inventory))
+        {
+            selectedInventory.Remove(inventory);
+        }
+        else
+        {
+            selectedInventory.Add(inventory);
+        }
+    }
+
+    public async Task CreateInventory()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var id = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var name = user.Identity?.Name;
+        Console.WriteLine(Input.Name);
+        Console.WriteLine(Input.Description);
+        _dbContext.Inventories.Add(new Inventory {
+            OwnerID = id, 
+            InventoryName = Input.Name, 
+            Description = Input.Description });
+        _dbContext.SaveChanges();
+        StateHasChanged();
+    }
+    
+    private void DeleteUsers()
+    {
+        foreach (var inventory in selectedInventory)
+        {
+            var u = _dbContext.Inventories.Find(inventory.InventoryID);
+            if (u != null)
+            {
+                
+                _dbContext.Inventories.Remove(u);
+            }
+        }
+
+        _dbContext.SaveChanges();
+        selectedInventory.Clear();
+        StateHasChanged();
+    }
+
+    private sealed class InputModel
+    {
+        public string Name { get; set; } = "";
+        public string Description { get; set; } = "";
+    }
+
+    private sealed class DisplayModel
+    {
+        public Guid? ID { get; set; }
+        public string Owner { get; set; } = "";
+        public string Name { get; set; } = "";
+        public string Description { get; set; } = "";
+        public Inventory  ThisInventory { get; set; } = new Inventory();
+    }
+    
+} 

@@ -1,5 +1,7 @@
 ﻿@page "/UserManager"
 
+@using Microsoft.AspNetCore.Authorization
+
 @rendermode InteractiveServer
 
 @using Microsoft.AspNetCore.Identity
@@ -7,7 +9,7 @@
 
 
 @inject UserManager<ApplicationUser> UserManager
-
+@attribute [Authorize]
 
 
 <PageTitle>User List</PageTitle>
@@ -83,14 +85,13 @@ else
     {
         var x = _dbContext.Users;
         usersList = x.ToList();
-        Console.WriteLine("===============================");
         var dbContextRoles = _dbContext.UserRoles.ToList();
         foreach (var role in dbContextRoles)
         {
             
             //user.UserId;
         }
-        Console.WriteLine("===============================");
+
         
         //using var conn = await _connectionFactory.CreateConnectionAsync();
         //var rows = await conn.QueryAsync<UserInformation>("SELECT * FROM test_table");
