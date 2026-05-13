@@ -1,0 +1,98 @@
+﻿@page "/InventoryManager/{InventoryId}/Permission"
+
+
+@using Microsoft.AspNetCore.Authorization
+
+@rendermode InteractiveServer
+
+@using Microsoft.AspNetCore.Identity
+@using InventoryApp.Data
+@using Microsoft.EntityFrameworkCore
+
+
+@inject UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthStateProvider
+@attribute [Authorize]
+
+
+<PageTitle>Inventory</PageTitle>
+
+<h1>Inventory</h1>
+
+
+@if (curentInventory is null)
+{
+    <h2>@InventoryId</h2>
+    <p>
+        <em>Inventory @InventoryId is not found</em>
+    </p>
+}
+else
+{
+    <h2>@curentInventory.InventoryName</h2>
+    <p>
+        <em>@curentInventory.Description</em>
+    </p>
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="/InventoryManager/@InventoryId">Active</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/InventoryManager/@InventoryId">Edit</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="/InventoryManager/@InventoryId/Permission">Permission</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+        </li>
+    </ul>
+}
+
+
+
+
+
+@code {
+    [Parameter]
+    public String InventoryId { get; set; }
+    
+    private Inventory curentInventory = new Inventory();
+    
+    private EditContext editContext = default!;
+    private readonly ApplicationDbContext _dbContext;
+    
+    List<Inventory> inventoryList = [];
+    List<DisplayModel> displayList = [];
+    HashSet<Inventory> selectedInventory = new HashSet<Inventory>();
+    
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
+
+    public InventoryPermission(ApplicationDbContext dbContext)
+    {
+        _dbContext = dbContext;
+        
+    }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        LoadInventory();
+    }
+
+    private async Task LoadInventory()
+    {
+        curentInventory = await _dbContext.Inventories.FirstOrDefaultAsync(x => x.InventoryID.ToString() == InventoryId);
+        StateHasChanged();
+    }
+    
+
+    private sealed class DisplayModel
+    {
+        public Guid? ID { get; set; }
+        public string Owner { get; set; } = "";
+        public string Name { get; set; } = "";
+        public string Description { get; set; } = "";
+        public Inventory  ThisInventory { get; set; } = new Inventory();
+    }
+    
+} 

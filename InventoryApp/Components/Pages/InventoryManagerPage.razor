@@ -62,8 +62,9 @@ else
                            @oninput="() => ChangeState(inventory.ThisInventory)"></td>
                 <td>@inventory.ID</td>
                 <td>@inventory.Owner</td>
-                <td>@inventory.Name</td>
+                <td><a href="InventoryManager/@inventory.ID">@inventory.Name</a></td>
                 <td>@inventory.Description</td>
+                
             </tr>
         }
 

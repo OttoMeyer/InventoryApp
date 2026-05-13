@@ -1,0 +1,102 @@
+﻿@page "/InventoryManager/{InventoryId}"
+
+
+@using Microsoft.AspNetCore.Authorization
+
+@rendermode InteractiveServer
+
+@using Microsoft.AspNetCore.Identity
+@using InventoryApp.Data
+@using Microsoft.EntityFrameworkCore
+
+
+@inject UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthStateProvider
+@attribute [Authorize]
+
+
+<PageTitle>Inventory</PageTitle>
+
+<h1>Inventory</h1>
+
+
+<nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Home</button>
+        <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Profile</button>
+        <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Contact</button>
+        <button class="nav-link" id="nav-disabled-tab" data-bs-toggle="tab" data-bs-target="#nav-disabled" type="button" role="tab" aria-controls="nav-disabled" aria-selected="false" disabled>Disabled</button>
+    </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">...</div>
+    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0">...</div>
+    <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab" tabindex="0">...</div>
+    <div class="tab-pane fade" id="nav-disabled" role="tabpanel" aria-labelledby="nav-disabled-tab" tabindex="0">...</div>
+</div>
+
+
+@if (curentInventory is null)
+{
+    <h2>@InventoryId</h2>
+    <p>
+        <em>Inventory @InventoryId is not found</em>
+    </p>
+}
+else
+{
+    <h2>@curentInventory.InventoryName</h2>
+    <p>
+        <em>@curentInventory.Description</em>
+    </p>
+    
+    
+}
+
+
+
+
+
+@code {
+    [Parameter]
+    public String InventoryId { get; set; }
+    
+    private Inventory curentInventory = new Inventory();
+    
+    private EditContext editContext = default!;
+    private readonly ApplicationDbContext _dbContext;
+    
+    List<Inventory> inventoryList = [];
+    List<DisplayModel> displayList = [];
+    HashSet<Inventory> selectedInventory = new HashSet<Inventory>();
+    
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
+
+    public InventoryPage(ApplicationDbContext dbContext)
+    {
+        _dbContext = dbContext;
+        
+    }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        LoadInventory();
+    }
+
+    private async Task LoadInventory()
+    {
+        curentInventory = await _dbContext.Inventories.FirstOrDefaultAsync(x => x.InventoryID.ToString() == InventoryId);
+        StateHasChanged();
+    }
+    
+
+    private sealed class DisplayModel
+    {
+        public Guid? ID { get; set; }
+        public string Owner { get; set; } = "";
+        public string Name { get; set; } = "";
+        public string Description { get; set; } = "";
+        public Inventory  ThisInventory { get; set; } = new Inventory();
+    }
+    
+} 
