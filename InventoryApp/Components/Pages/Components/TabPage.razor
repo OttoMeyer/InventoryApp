@@ -1,0 +1,66 @@
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
+@using InventoryApp.Data
+@using Microsoft.EntityFrameworkCore
+
+@inject UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthStateProvider
+@attribute [Authorize]
+
+@if (Parent.ActivePage == this && Visible)
+{
+    @ChildContent
+}
+
+@code {
+    [CascadingParameter]
+    private TabControl Parent { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+    
+    [Parameter]
+    public string Text { get; set; }
+    
+    [Parameter]
+    public Inventory CurentInventory { get; set; }
+    
+    [Parameter]
+    public string PermissionType { get; set; }
+    
+    public bool Visible { get; set; } = true;
+
+    private readonly ApplicationDbContext _dbContext;
+    
+    public TabPage(ApplicationDbContext dbContext)
+    {
+        _dbContext = dbContext;
+        
+    }
+    
+    protected override void OnInitialized()
+    {
+        if (Parent == null)
+            throw new ArgumentNullException(nameof(Parent), "TabPage must exist within a TabControl");
+        base.OnInitialized();
+        Parent.AddPage(this);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var _appUser = await UserManager.GetUserAsync(user);
+
+        var _permission =  await _dbContext.InventoryPermissions
+            .FirstOrDefaultAsync(x => x.Inventory == CurentInventory && x.User == _appUser);
+        StateHasChanged();
+        
+        if (_permission != null)
+        {
+            Console.WriteLine(_permission.Permission == PermissionType);
+            Visible = _permission.Permission != PermissionType;
+        }
+    }
+}

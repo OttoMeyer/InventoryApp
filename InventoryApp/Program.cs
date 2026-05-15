@@ -77,12 +77,12 @@ if (app.Environment.IsDevelopment())
     
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    /*
+    
     var user = db.Users.FirstOrDefault(u => u.UserName == "admin@mail.com");
     await userManager.AddToRoleAsync(user, Roles.Admin);
     var x = await userManager.GetRolesAsync(user);
     x.ToList().ForEach(role => Console.WriteLine($"{role}"));
-    */
+    
 
 }
 else

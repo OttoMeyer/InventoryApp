@@ -202,6 +202,22 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBdXRoLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Otto/RiderProjects/InventoryApp/InventoryApp/Components/Pages/Components/MyFirstComponent.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDb21wb25lbnRzXE15Rmlyc3RDb21wb25lbnQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Otto/RiderProjects/InventoryApp/InventoryApp/Components/Pages/Components/PermissionTab.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDb21wb25lbnRzXFBlcm1pc3Npb25UYWIucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Otto/RiderProjects/InventoryApp/InventoryApp/Components/Pages/Components/TabControl.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDb21wb25lbnRzXFRhYkNvbnRyb2wucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Otto/RiderProjects/InventoryApp/InventoryApp/Components/Pages/Components/TabPage.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDb21wb25lbnRzXFRhYlBhZ2UucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Otto/RiderProjects/InventoryApp/InventoryApp/Components/Pages/Error.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFcnJvci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
