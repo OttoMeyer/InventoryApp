@@ -13,6 +13,7 @@
 
 @inject UserManager<ApplicationUser> UserManager
 @inject AuthenticationStateProvider AuthStateProvider
+@inject InventoryPermissionManager PermissionManager
 @attribute [Authorize]
 
 
@@ -27,14 +28,15 @@
     <TabPage Text="Edit">
         <h1>The second tab</h1>
     </TabPage>
-    <TabPage Text="Permissions" 
-             CurentInventory="@curentInventory" 
-             PermissionType="@Permissions.Write">
-        <PermissionTab curentInventory= "@curentInventory"></PermissionTab>
-    </TabPage>
+    @if (CanEdit())
+    {
+        <TabPage Text="Permissions">
+            <PermissionTab CurrentInventory= "@_currentInventory"></PermissionTab>
+        </TabPage>
+    }
 </TabControl>
 
-@if (curentInventory is null)
+@if (_currentInventory is null)
 {
     <h2>@InventoryId</h2>
     <p>
@@ -43,70 +45,55 @@
 }
 else
 {
-    <h2>@curentInventory.InventoryName</h2>
+    <h2>@_currentInventory.InventoryName</h2>
     <p>
-        <em>@curentInventory.Description</em>
+        <em>@_currentInventory.Description</em>
     </p>
-    
-    
 }
 
 @code {
     [Parameter]
     public String InventoryId { get; set; }
+
+    private bool _isOwner = false;
+    private bool _isAdmin = false;
     
-    private ApplicationUser _appUser;
-    private InventoryPermissions _permission;
-    private Inventory curentInventory = new Inventory();
+    private ApplicationUser? _appUser;
+    private string _permissionString;
+    private Inventory _currentInventory = new Inventory();
     
-    
-    private EditContext editContext = default!;
     private readonly ApplicationDbContext _dbContext;
     
-    List<Inventory> inventoryList = [];
-    List<DisplayModel> displayList = [];
-    HashSet<Inventory> selectedInventory = new HashSet<Inventory>();
     
     [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
 
     public InventoryPage(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
-        
     }
     
     protected override async Task OnInitializedAsync()
     {
         await LoadInventory();
         
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        _permissionString = await PermissionManager.GetPermissionAsync(_currentInventory, user);
+        _appUser = await UserManager.GetUserAsync(user);
+        
+        _isOwner = _currentInventory.OwnerID == _appUser.Id;
+        var roles = await UserManager.GetRolesAsync(_appUser);
+        _isAdmin = roles.Contains(Roles.Admin);
 
     }
 
+    bool CanEdit() => _permissionString == Permissions.Write || _isOwner || _isAdmin;
+    
     private async Task LoadInventory()
     {
-        curentInventory = await _dbContext.Inventories.FirstOrDefaultAsync(x => x.InventoryID.ToString() == InventoryId);
+        _currentInventory = await _dbContext.Inventories.FirstOrDefaultAsync(x => x.InventoryID.ToString() == InventoryId);
         StateHasChanged();
     }
-
-    private bool havePermission(string permissionType)
-    {
-        Console.WriteLine("------------------------------------");
-        Console.WriteLine(_permission != null);
-        if (_permission != null)
-        {
-            /*
-            Console.WriteLine(_permission.Permission);
-            Console.WriteLine(permissionType);
-            Console.WriteLine();
-            Console.WriteLine(_permission.Permission == permissionType);
-            Console.WriteLine();
-            */
-            Console.WriteLine(_permission.Permission == permissionType);
-            return _permission.Permission == permissionType;
-        }
-        return false;
-    }
-    
 
     private sealed class DisplayModel
     {

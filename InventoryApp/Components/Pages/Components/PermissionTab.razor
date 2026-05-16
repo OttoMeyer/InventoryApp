@@ -15,7 +15,7 @@
         <button type="button" class="btn btn-danger" @onclick="DeletePermission"><i class="bi bi-ban"></i></button>
     </div>
 </div>
-@if (displayList == null)
+@if (_displayList == null)
 {
     <p>
         <em>Loading...</em>
@@ -33,13 +33,13 @@ else
         </tr>
         </thead>
         <tbody class="table-group-divider">
-        @foreach (var userDataType in displayList)
+        @foreach (var userDataType in _displayList)
         { 
             <tr>
                 <td><input class="form-check-input" 
                            type="checkbox" 
                            id="checkboxNoLabel" 
-                           checked="@selectedUsers.Contains(userDataType.User)" 
+                           checked="@_selectedUsers.Contains(userDataType.User)" 
                            aria-label="..." 
                            @oninput="() => ChangeState(userDataType.User)"></td>
                 <td>@userDataType.UserName</td>
@@ -58,11 +58,11 @@ else
     
     
     [Parameter]
-    public Inventory curentInventory { get; set; }
+    public Inventory CurrentInventory { get; set; }
     
-    List<ApplicationUser> usersList = [];
-    List<DisplayModel> displayList = [];
-    HashSet<ApplicationUser> selectedUsers = new HashSet<ApplicationUser>();
+    List<ApplicationUser> _usersList = [];
+    List<DisplayModel> _displayList = [];
+    HashSet<ApplicationUser> _selectedUsers = new HashSet<ApplicationUser>();
 
     public PermissionTab(ApplicationDbContext dbContext)
     {
@@ -72,7 +72,7 @@ else
     
     protected override async Task OnInitializedAsync()
     {
-        base.OnInitializedAsync();
+        await base.OnInitializedAsync();
         await LoadUsers(); 
 
 
@@ -80,18 +80,18 @@ else
     
     private async Task LoadUsers()
     {
-        usersList.Clear();
-        displayList.Clear();
-        usersList = _dbContext.Users.ToList();
-        foreach (var user in usersList)
+        _usersList.Clear();
+        _displayList.Clear();
+        _usersList = _dbContext.Users.ToList();
+        foreach (var user in _usersList)
         {
             var permission = await _dbContext.InventoryPermissions
-                .FirstOrDefaultAsync(x => x.Inventory == curentInventory && x.User == user);
+                .FirstOrDefaultAsync(x => x.Inventory == CurrentInventory && x.User == user);
             var p = permission == null ? "" : permission.Permission;
-            displayList.Add(new DisplayModel
+            _displayList.Add(new DisplayModel
             {
-                UserName = user.UserName,
-                Email = user.Email,
+                UserName = user.UserName ?? "",
+                Email = user.Email ?? "",
                 Permission = p,
                 User = user
             });
@@ -101,27 +101,27 @@ else
     
     private void ChangeState(ApplicationUser user)
     {
-        if (selectedUsers.Contains(user))
+        if (_selectedUsers.Contains(user))
         {
-            selectedUsers.Remove(user);
+            _selectedUsers.Remove(user);
         }
         else
         {
-            selectedUsers.Add(user);
+            _selectedUsers.Add(user);
         }
     }
 
     private async Task GivePermission()
     {
-        foreach (var user in selectedUsers)
+        foreach (var user in _selectedUsers)
         {
             var permission = await _dbContext.InventoryPermissions
-                .FirstOrDefaultAsync(x => x.Inventory == curentInventory && x.User == user);
+                .FirstOrDefaultAsync(x => x.Inventory == CurrentInventory && x.User == user);
             if (permission == null)
             {
                 var p = new InventoryPermissions
                 {
-                    Inventory =  curentInventory,
+                    Inventory =  CurrentInventory,
                     User = user,
                     Permission = Permissions.Write
                 };
@@ -133,21 +133,21 @@ else
             }
             
         }
-        _dbContext.SaveChanges();
-        selectedUsers.Clear();
+        await _dbContext.SaveChangesAsync();
+        _selectedUsers.Clear();
         await LoadUsers();
     }
 
     private async Task DeletePermission()
     {
-        foreach (var user in selectedUsers)
+        foreach (var user in _selectedUsers)
         {
             var permission = await _dbContext.InventoryPermissions
-                .FirstOrDefaultAsync(x => x.Inventory == curentInventory && x.User == user);
+                .FirstOrDefaultAsync(x => x.Inventory == CurrentInventory && x.User == user);
             if (permission != null) _dbContext.InventoryPermissions.Remove(permission);
         }
-        _dbContext.SaveChanges();
-        selectedUsers.Clear();
+        await _dbContext.SaveChangesAsync();
+        _selectedUsers.Clear();
         await LoadUsers();
     }
     

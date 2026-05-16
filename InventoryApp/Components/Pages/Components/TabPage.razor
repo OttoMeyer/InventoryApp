@@ -24,11 +24,6 @@
     public string Text { get; set; }
     
     [Parameter]
-    public Inventory CurentInventory { get; set; }
-    
-    [Parameter]
-    public string PermissionType { get; set; }
-    
     public bool Visible { get; set; } = true;
 
     private readonly ApplicationDbContext _dbContext;
@@ -45,22 +40,5 @@
             throw new ArgumentNullException(nameof(Parent), "TabPage must exist within a TabControl");
         base.OnInitialized();
         Parent.AddPage(this);
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-        var _appUser = await UserManager.GetUserAsync(user);
-
-        var _permission =  await _dbContext.InventoryPermissions
-            .FirstOrDefaultAsync(x => x.Inventory == CurentInventory && x.User == _appUser);
-        StateHasChanged();
-        
-        if (_permission != null)
-        {
-            Console.WriteLine(_permission.Permission == PermissionType);
-            Visible = _permission.Permission != PermissionType;
-        }
     }
 }
