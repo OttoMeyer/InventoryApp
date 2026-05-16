@@ -9,7 +9,7 @@
         "environmentVariables": {
           "ASPNETCORE_ENVIRONMENT": "Development",
           "DefaultConnection": "Server=localhost;Port=5432;Database=postgres;Userid=postgres;Password=postgres",
-          "ExternalConnection": "Server=dpg-d7u4v15ckfvc73ekn1og-a.oregon-postgres.render.com;Port=5432;Database=postgressql_gdh4;Userid=postgressql_gdh4_user;Password=s30HSMNe5pZCpTNGVuU4dEHqRiUB6R7c"
+          "ExternalConnection": "Server=dpg-d844mjsvikkc738rn2b0-a.oregon-postgres.render.com;Port=5432;Database=inventorydb_3rp2;Userid=inventorydb_3rp2_user;Password=ihdLqlFPIdnBcEWaPTRxUzbPcvJBZeUv"
         }
       },
       "https": {
@@ -20,7 +20,7 @@
         "environmentVariables": {
           "ASPNETCORE_ENVIRONMENT": "Development",
           "DefaultConnection": "Server=localhost;Port=5432;Database=postgres;Userid=postgres;Password=postgres",
-          "ExternalConnection": "Server=dpg-d7u4v15ckfvc73ekn1og-a.oregon-postgres.render.com;Port=5432;Database=postgressql_gdh4;Userid=postgressql_gdh4_user;Password=s30HSMNe5pZCpTNGVuU4dEHqRiUB6R7c"
+          "ExternalConnection": "Server=dpg-d844mjsvikkc738rn2b0-a.oregon-postgres.render.com;Port=5432;Database=inventorydb_3rp2;Userid=inventorydb_3rp2_user;Password=ihdLqlFPIdnBcEWaPTRxUzbPcvJBZeUv"
         }
       }
     }
