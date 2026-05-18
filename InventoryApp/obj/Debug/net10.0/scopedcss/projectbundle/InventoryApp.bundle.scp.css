@@ -10,7 +10,7 @@ main[b-lsm6ychziy] {
 }
 
 .sidebar[b-lsm6ychziy] {
-    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
+    background-image: linear-gradient(45deg, var(--bs-primary), var(--bs-cyan));
 }
 
 .top-row[b-lsm6ychziy] {
@@ -103,7 +103,7 @@ main[b-lsm6ychziy] {
     cursor: pointer;
     width: 3.5rem;
     height: 2.5rem;
-    color: white;
+    color: var(--bs-dark);
     position: absolute;
     top: 0.5rem;
     right: 1rem;
@@ -180,7 +180,7 @@ main[b-lsm6ychziy] {
     }
 
     .nav-item[b-kkk5bfaoh0]  .nav-link {
-        color: #d7d7d7;
+        color: var(--bs-gray-700);
         background: none;
         border: none;
         border-radius: 4px;
@@ -193,12 +193,12 @@ main[b-lsm6ychziy] {
 
 .nav-item[b-kkk5bfaoh0]  a.active {
     background-color: rgba(255,255,255,0.37);
-    color: white;
+    color: var(--bs-dark);
 }
 
 .nav-item[b-kkk5bfaoh0]  .nav-link:hover {
     background-color: rgba(255,255,255,0.1);
-    color: white;
+    color: var(--bs-dark);
 }
 
 .nav-scrollable[b-kkk5bfaoh0] {

@@ -19,37 +19,31 @@
 
 <PageTitle>Inventory</PageTitle>
 
-<h1>Inventory</h1>
+<div class="card m-2">
+    <h5 class="card-header">@_currentInventory.InventoryName</h5>
+    <div class="card-body" style="white-space: pre-wrap">
+        @_currentInventory.Description
+    </div>
+</div>
+
+@_currentInventory.Description
 
 <TabControl>
     <TabPage Text="Items">
         <h1>The second tab</h1>
     </TabPage>
-    <TabPage Text="Edit">
-        <h1>The second tab</h1>
-    </TabPage>
     @if (CanEdit())
     {
+        <TabPage Text="Edit">
+            <EditTab CurrentInventory= "@_currentInventory"></EditTab>
+        </TabPage>
         <TabPage Text="Permissions">
             <PermissionTab CurrentInventory= "@_currentInventory"></PermissionTab>
         </TabPage>
     }
 </TabControl>
 
-@if (_currentInventory is null)
-{
-    <h2>@InventoryId</h2>
-    <p>
-        <em>Inventory @InventoryId is not found</em>
-    </p>
-}
-else
-{
-    <h2>@_currentInventory.InventoryName</h2>
-    <p>
-        <em>@_currentInventory.Description</em>
-    </p>
-}
+
 
 @code {
     [Parameter]

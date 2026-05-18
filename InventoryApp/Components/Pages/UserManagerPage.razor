@@ -46,7 +46,7 @@ else
         @foreach (var userDataType in usersList)
         { 
             <tr>
-                <td><input class="form-check-input" 
+                <td class="text-center"><input class="form-check-input" 
                            type="checkbox" 
                            id="checkboxNoLabel" 
                            checked="@selectedUsers.Contains(userDataType)" 
@@ -86,16 +86,6 @@ else
         var x = _dbContext.Users;
         usersList = x.ToList();
         var dbContextRoles = _dbContext.UserRoles.ToList();
-        foreach (var role in dbContextRoles)
-        {
-            
-            //user.UserId;
-        }
-
-        
-        //using var conn = await _connectionFactory.CreateConnectionAsync();
-        //var rows = await conn.QueryAsync<UserInformation>("SELECT * FROM test_table");
-        //usersList = rows.ToList();
     } 
     
     private void ChangeState(ApplicationUser user)
@@ -114,9 +104,7 @@ else
     {
         foreach (var user in selectedUsers)
         {
-            //user.Status = "Block";
-            //var conn = _connectionFactory.CreateConnection();
-            //conn.Execute("UPDATE test_table SET Status = 'Block' WHERE Email = @Email;", new { Email = user.Email });
+            
         }
         selectedUsers.Clear();
         StateHasChanged();
@@ -126,9 +114,7 @@ else
     {
         foreach (var user in selectedUsers)
         {
-            //user.Status = "Active";
-            //var conn = _connectionFactory.CreateConnection();
-            //conn.Execute("UPDATE test_table SET Status = 'Block' WHERE Email = @Email;", new { Email = user.Email });
+            
         }
         selectedUsers.Clear();
         StateHasChanged();
@@ -143,9 +129,6 @@ else
             {
                 _dbContext.Users.Remove(u);
             }
-            //usersList.Remove(user);
-            //var conn = _connectionFactory.CreateConnection();
-            //conn.Execute("DELETE FROM test_table WHERE Email = @Email;", new { Email = user.Email });
         }
 
         _dbContext.SaveChanges();

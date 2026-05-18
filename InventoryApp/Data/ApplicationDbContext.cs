@@ -10,4 +10,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     
     public DbSet<InventoryPermissions>  InventoryPermissions { get; set; }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseNpgsql(Environment.GetEnvironmentVariable("ExternalConnection"));
+    }
 }

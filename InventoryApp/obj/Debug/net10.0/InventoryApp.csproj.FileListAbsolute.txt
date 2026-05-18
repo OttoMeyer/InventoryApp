@@ -191,8 +191,6 @@ C:\Users\Otto\RiderProjects\InventoryApp\InventoryApp\obj\Debug\net10.0\compress
 C:\Users\Otto\RiderProjects\InventoryApp\InventoryApp\obj\Debug\net10.0\compressed\abz0ynal7q-{0}-abdmv1u4y3-abdmv1u4y3.gz
 C:\Users\Otto\RiderProjects\InventoryApp\InventoryApp\obj\Debug\net10.0\compressed\5andjhgoyl-{0}-b9228eflpl-b9228eflpl.gz
 C:\Users\Otto\RiderProjects\InventoryApp\InventoryApp\obj\Debug\net10.0\compressed\fukuq53s4g-{0}-2tj1sjhksk-2tj1sjhksk.gz
-C:\Users\Otto\RiderProjects\InventoryApp\InventoryApp\obj\Debug\net10.0\compressed\o01cidzsny-{0}-v9tq0i6oa6-v9tq0i6oa6.gz
-C:\Users\Otto\RiderProjects\InventoryApp\InventoryApp\obj\Debug\net10.0\compressed\39ja4fqh6o-{0}-v9tq0i6oa6-v9tq0i6oa6.gz
 C:\Users\Otto\RiderProjects\InventoryApp\InventoryApp\obj\Debug\net10.0\staticwebassets.build.json
 C:\Users\Otto\RiderProjects\InventoryApp\InventoryApp\obj\Debug\net10.0\staticwebassets.build.json.cache
 C:\Users\Otto\RiderProjects\InventoryApp\InventoryApp\obj\Debug\net10.0\staticwebassets.development.json
@@ -207,3 +205,5 @@ C:\Users\Otto\RiderProjects\InventoryApp\InventoryApp\obj\Debug\net10.0\ref\Inve
 C:\Users\Otto\RiderProjects\InventoryApp\InventoryApp\bin\Debug\net10.0\Npgsql.dll
 C:\Users\Otto\RiderProjects\InventoryApp\InventoryApp\bin\Debug\net10.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
 C:\Users\Otto\RiderProjects\InventoryApp\InventoryApp\obj\Debug\net10.0\InventoryApp.sourcelink.json
+C:\Users\Otto\RiderProjects\InventoryApp\InventoryApp\obj\Debug\net10.0\compressed\o01cidzsny-{0}-k9l86jam3z-k9l86jam3z.gz
+C:\Users\Otto\RiderProjects\InventoryApp\InventoryApp\obj\Debug\net10.0\compressed\39ja4fqh6o-{0}-k9l86jam3z-k9l86jam3z.gz

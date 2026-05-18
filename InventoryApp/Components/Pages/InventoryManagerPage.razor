@@ -16,61 +16,50 @@
 
 <PageTitle>Inventory Manager</PageTitle>
 
-<h1>Inventory Manager</h1>
+<h1><i class="bi bi-box-seam-fill"></i> Inventory Manager</h1>
 
-<EditForm EditContext="editContext" method="post" OnSubmit="CreateInventory" FormName="login">
-    <InputText @bind-Value="Input.Name" id="Input.Email" class="form-control"  aria-required="true" placeholder="Name"/>
-    <InputText @bind-Value="Input.Description" id="Input.Description" class="form-control"  aria-required="true" placeholder="Description"/>
-    <button type="submit" class="w-100 btn btn-lg btn-primary">Create</button>
-</EditForm>
-
-<div class="row row-cols-auto">
+<div class="row row-cols-auto m-2">
     <div class="col btn-group" role="group" aria-label="Basic example">
-        <button type="button" class="btn btn-primary" @onclick="DeleteUsers"><i class="bi bi-lock-fill"></i> Block</button>
-        <button type="button" class="btn btn-primary" @onclick="DeleteUsers"><i class="bi bi-unlock-fill"></i></button>
-        <button type="button" class="btn btn-danger" @onclick="DeleteUsers"><i class="bi bi-trash-fill"></i></button>
+        <button type="button" class="btn btn-danger" @onclick="DeleteUsers"><i class="bi bi-trash-fill"></i> Delete</button>
     </div>
 </div>
 
-@if (inventoryList == null)
-{
-    <p>
-        <em>Loading...</em>
-    </p>
-}
-else
-{
-    <table class="table">
-        <thead>
+<EditForm EditContext="editContext" method="post" OnSubmit="CreateInventory" FormName="login">
+<table class="table table-striped-columns m-2">
+    <thead class="table-info">
+    <tr>
+        <td class="col-1"></td>
+        <th class="col-3">Owner</th>
+        <th class="col-3">Name</th>
+        <th class="col-5">Description</th>
+    </tr>
+    </thead>
+    <tbody class="table-group-divider">
+    
+    <td class="text-center"><button type="submit" class="btn btn-lg"><i class="bi bi-plus-square-fill"></i></button></td>
+    <td></td>
+    <td><InputText @bind-Value="Input.Name" id="Input.Email" class="form-control" aria-required="true" placeholder="Name"/></td>
+    <td><InputText @bind-Value="Input.Description" id="Input.Description" class="form-control" aria-required="true" placeholder="Description"/></td>
+    
+    @foreach (var inventory in displayList)
+    {
         <tr>
-            <td class="col-1"></td>
-            <th class="col-2">Id</th>
-            <th class="col-3">Owner</th>
-            <th class="col-3">Name</th>
-            <th class="col-3">Description</th>
+            <td class="text-center">
+                <input class="form-check-input"
+                       type="checkbox"
+                       id="checkboxNoLabel"
+                       checked="@selectedInventory.Contains(inventory.ThisInventory)"
+                       aria-label="..."
+                       @oninput="() => ChangeState(inventory.ThisInventory)"></td>
+            <td>@inventory.Owner</td>
+            <td><a href="InventoryManager/@inventory.ID">@inventory.Name</a></td>
+            <td>@inventory.Description</td>
         </tr>
-        </thead>
-        <tbody class="table-group-divider">
-        @foreach (var inventory in displayList)
-        { 
-            <tr>
-                <td><input class="form-check-input" 
-                           type="checkbox" 
-                           id="checkboxNoLabel" 
-                           checked="@selectedInventory.Contains(inventory.ThisInventory)" 
-                           aria-label="..." 
-                           @oninput="() => ChangeState(inventory.ThisInventory)"></td>
-                <td>@inventory.ID</td>
-                <td>@inventory.Owner</td>
-                <td><a href="InventoryManager/@inventory.ID">@inventory.Name</a></td>
-                <td>@inventory.Description</td>
-                
-            </tr>
-        }
+    }
+    </tbody>
+</table>
+</EditForm>
 
-        </tbody>
-    </table>
-}
 
 
 

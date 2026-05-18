@@ -70,10 +70,6 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBY2NvdW50XFBhZ2VzXExvZ2luLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Otto/RiderProjects/InventoryApp/InventoryApp/Components/Account/Pages/Login2.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBY2NvdW50XFBhZ2VzXExvZ2luMi5yYXpvcg==
-build_metadata.AdditionalFiles.CssScope = 
-
 [C:/Users/Otto/RiderProjects/InventoryApp/InventoryApp/Components/Account/Pages/LoginWith2fa.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBY2NvdW50XFBhZ2VzXExvZ2luV2l0aDJmYS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
@@ -142,6 +138,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBY2NvdW50XFBhZ2VzXE1hbmFnZVxfSW1wb3J0cy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Otto/RiderProjects/InventoryApp/InventoryApp/Components/Account/Pages/OldLogin.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBY2NvdW50XFBhZ2VzXE9sZExvZ2luLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Otto/RiderProjects/InventoryApp/InventoryApp/Components/Account/Pages/Register.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBY2NvdW50XFBhZ2VzXFJlZ2lzdGVyLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
@@ -200,6 +200,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/Otto/RiderProjects/InventoryApp/InventoryApp/Components/Pages/Auth.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBdXRoLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Otto/RiderProjects/InventoryApp/InventoryApp/Components/Pages/Components/EditTab.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDb21wb25lbnRzXEVkaXRUYWIucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Otto/RiderProjects/InventoryApp/InventoryApp/Components/Pages/Components/MyFirstComponent.razor]

@@ -1,0 +1,90 @@
+@rendermode InteractiveServer
+
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
+@using InventoryApp.Data
+@using Microsoft.EntityFrameworkCore
+
+@inject UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthStateProvider
+
+@attribute [Authorize]
+
+<EditForm EditContext="_editContext" method="post" OnSubmit="SaveInventory" FormName="login">
+    <div class="input-group mb-3">
+        <span class="input-group-text" id="inputGroup-sizing-default">Name</span>
+        <InputText @bind-Value="Input.Name" id="Input.Email" class="form-control" aria-required="true" placeholder="Name"/>
+    </div>
+    <div class="form-floating mb-3">
+        <InputTextArea @bind-Value="Input.Description" 
+                       id="Input.Description" 
+                       class="form-control" 
+                       aria-required="true" 
+                       placeholder="Description" 
+                       style="height: 200px"/>
+        <label for="Input.Description">Description</label>
+    </div>
+</EditForm>
+
+<div class="row row-cols-auto m-2">
+    <div class="col btn-group" role="group" aria-label="Basic example">
+        <button type="button" class="btn btn-primary" @onclick="SaveInventory"><i class="bi bi-floppy-fill"></i> Save</button>
+    </div>
+</div>
+
+
+
+@code {
+
+    private EditContext _editContext = default!;
+    [SupplyParameterFromForm] private InputModel Input { get; set; } = default!;
+    
+    private readonly ApplicationDbContext _dbContext;
+    
+    [Parameter]
+    public Inventory CurrentInventory { get; set; }
+    
+    private ApplicationUser? _appUser;
+    
+    public EditTab(ApplicationDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        Input ??= new();
+        _editContext = new EditContext(Input);
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        _appUser = await UserManager.GetUserAsync(user);
+        
+        await base.OnInitializedAsync();
+        await LoadInventory(); 
+    }
+    
+    private async Task LoadInventory()
+    {
+        Console.WriteLine(CurrentInventory.Description);
+        
+        Input = new InputModel
+        {
+            Name = CurrentInventory.InventoryName,
+            Description = CurrentInventory.Description
+        };
+        StateHasChanged();
+    }
+
+    public async Task SaveInventory()
+    {
+        CurrentInventory.InventoryName = Input.Name;
+        CurrentInventory.Description = Input.Description;
+        _dbContext.SaveChanges();
+    }
+    
+    private sealed class InputModel
+    {
+        public string Name { get; set; } = "";
+        public string Description { get; set; } = "";
+    }
+}

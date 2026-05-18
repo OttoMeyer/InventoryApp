@@ -1,10 +1,10 @@
 @rendermode InteractiveServer
 
-<div class="btn-group" role="group">
+<div class="nav nav-tabs m-2" role="group">
     @foreach (TabPage tabPage in Pages)
     {
         <button type="button"
-                class="btn @GetButtonClass(tabPage)"
+                class="nav-link @GetButtonClass(tabPage)"
                 @onclick=@( () => ActivatePage(tabPage) )>
             @tabPage.Text
         </button>
@@ -33,7 +33,7 @@
     
     string GetButtonClass(TabPage page)
     {
-        return page == ActivePage ? "btn-primary" : "btn-secondary";
+        return page == ActivePage ? "active" : "";
     }
 
     void ActivatePage(TabPage page)

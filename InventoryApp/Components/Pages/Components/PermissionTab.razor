@@ -5,51 +5,45 @@
 @using InventoryApp.Data
 @using Microsoft.EntityFrameworkCore
 
+@inject UserManager<ApplicationUser> UserManager
 @inject AuthenticationStateProvider AuthStateProvider
 
 @attribute [Authorize]
 
-<div class="row row-cols-auto">
+<div class="row row-cols-auto m-2">
     <div class="col btn-group" role="group" aria-label="Basic example">
         <button type="button" class="btn btn-primary" @onclick="GivePermission"><i class="bi bi-pencil-fill"></i> Write</button>
         <button type="button" class="btn btn-danger" @onclick="DeletePermission"><i class="bi bi-ban"></i></button>
     </div>
 </div>
-@if (_displayList == null)
-{
-    <p>
-        <em>Loading...</em>
-    </p>
-}
-else
-{
-    <table class="table">
-        <thead>
-        <tr>
-            <td class="col-1"></td>
-            <th class="col-2">Name</th>
-            <th class="col-3">Email</th>
-            <th class="col-3">Permission</th>
-        </tr>
-        </thead>
-        <tbody class="table-group-divider">
-        @foreach (var userDataType in _displayList)
-        { 
-            <tr>
-                <td><input class="form-check-input" 
-                           type="checkbox" 
-                           id="checkboxNoLabel" 
-                           checked="@_selectedUsers.Contains(userDataType.User)" 
-                           aria-label="..." 
-                           @oninput="() => ChangeState(userDataType.User)"></td>
-                <td>@userDataType.UserName</td>
-                <td>@userDataType.Email</td>
-                <td>@userDataType.Permission</td>
-            </tr>
-        }
-        </tbody>
-    </table>
-}
+
+<table class="table table-striped-columns m-2">
+    <thead class="table-info">
+    <tr>
+        <td class="col-1"></td>
+        <th class="col-2">Name</th>
+        <th class="col-3">Email</th>
+        <th class="col-3">Permission</th>
+    </tr>
+    </thead>
+    <tbody class="table-group-divider">
+    @foreach (var userDataType in _displayList)
+       { 
+           <tr>
+               <td class="text-center"><input class="form-check-input" 
+                          type="checkbox" 
+                          id="checkboxNoLabel" 
+                          checked="@_selectedUsers.Contains(userDataType.User)" 
+                          aria-label="..." 
+                          @oninput="() => ChangeState(userDataType.User)"></td>
+               <td>@userDataType.UserName</td>
+               <td>@userDataType.Email</td>
+               <td>@userDataType.Permission</td>
+           </tr>
+       }
+    </tbody>
+</table>
+
 
 
 @code {
@@ -60,6 +54,7 @@ else
     [Parameter]
     public Inventory CurrentInventory { get; set; }
     
+    private ApplicationUser? _appUser;
     List<ApplicationUser> _usersList = [];
     List<DisplayModel> _displayList = [];
     HashSet<ApplicationUser> _selectedUsers = new HashSet<ApplicationUser>();
@@ -72,6 +67,10 @@ else
     
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        _appUser = await UserManager.GetUserAsync(user);
+        
         await base.OnInitializedAsync();
         await LoadUsers(); 
 
@@ -83,10 +82,12 @@ else
         _usersList.Clear();
         _displayList.Clear();
         _usersList = _dbContext.Users.ToList();
+
+        var permissions = await _dbContext.InventoryPermissions.ToListAsync();
         foreach (var user in _usersList)
         {
-            var permission = await _dbContext.InventoryPermissions
-                .FirstOrDefaultAsync(x => x.Inventory == CurrentInventory && x.User == user);
+            if (user == _appUser) return;
+            var permission = permissions.FirstOrDefault(x => x.Inventory == CurrentInventory && x.User == user);
             var p = permission == null ? "" : permission.Permission;
             _displayList.Add(new DisplayModel
             {
