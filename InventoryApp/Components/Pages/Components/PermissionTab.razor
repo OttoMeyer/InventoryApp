@@ -1,5 +1,6 @@
 @rendermode InteractiveServer
 
+@using System.Security.Claims
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Identity
 @using InventoryApp.Data
@@ -17,34 +18,30 @@
     </div>
 </div>
 
-<table class="table table-striped-columns m-2">
-    <thead class="table-info">
-    <tr>
-        <td class="col-1"></td>
-        <th class="col-2">Name</th>
-        <th class="col-3">Email</th>
-        <th class="col-3">Permission</th>
-    </tr>
-    </thead>
-    <tbody class="table-group-divider">
-    @foreach (var userDataType in _displayList)
-       { 
-           <tr>
-               <td class="text-center"><input class="form-check-input" 
-                          type="checkbox" 
-                          id="checkboxNoLabel" 
-                          checked="@_selectedUsers.Contains(userDataType.User)" 
-                          aria-label="..." 
-                          @oninput="() => ChangeState(userDataType.User)"></td>
-               <td>@userDataType.UserName</td>
-               <td>@userDataType.Email</td>
-               <td>@userDataType.Permission</td>
-           </tr>
-       }
-    </tbody>
-</table>
-
-
+<RadzenTable>
+    <RadzenTableHeader>
+        <RadzenTableHeaderRow>
+            <RadzenTableHeaderCell class="col-1"></RadzenTableHeaderCell>
+            <RadzenTableHeaderCell class="col-2">Name</RadzenTableHeaderCell>
+            <RadzenTableHeaderCell class="col-3">Email</RadzenTableHeaderCell>
+            <RadzenTableHeaderCell class="col-3">Permission</RadzenTableHeaderCell>
+        </RadzenTableHeaderRow>
+    </RadzenTableHeader>
+    <RadzenTableBody>
+        @foreach (var userDataType in _displayList)
+        {
+            
+            <RadzenTableRow>
+                <RadzenTableCell class="text-center">
+                    <RadzenCheckBox TValue="bool" ValueChanged="() => ChangeState(userDataType.User)" Value="@_selectedUsers.Contains(userDataType.User)" Name="CheckBox2" />
+                </RadzenTableCell>
+                <RadzenTableCell>@userDataType.UserName</RadzenTableCell>
+                <RadzenTableCell>@userDataType.Email</RadzenTableCell>
+                <RadzenTableCell>@userDataType.Permission</RadzenTableCell>
+            </RadzenTableRow>
+        }
+    </RadzenTableBody>
+</RadzenTable>
 
 @code {
 
@@ -67,37 +64,56 @@
     
     protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
+        var user = await GetUserClaim();
         _appUser = await UserManager.GetUserAsync(user);
         
         await base.OnInitializedAsync();
         await LoadUsers(); 
-
-
+    }
+    
+    private async Task<ClaimsPrincipal> GetUserClaim()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        return authState.User;
     }
     
     private async Task LoadUsers()
     {
-        _usersList.Clear();
-        _displayList.Clear();
+        ClearState();
+        
         _usersList = _dbContext.Users.ToList();
 
         var permissions = await _dbContext.InventoryPermissions.ToListAsync();
+        _displayList = await ToDisplayModelList(permissions);
+        
+        StateHasChanged();
+    }
+
+    private void ClearState()
+    {
+        _usersList.Clear();
+        _displayList.Clear();
+    }
+
+    private async Task<List<DisplayModel>> ToDisplayModelList(List<InventoryPermissions> permissions)
+    {
+        List<DisplayModel> displayList = new List<DisplayModel>();
         foreach (var user in _usersList)
         {
-            if (user == _appUser) return;
+            if (user == _appUser) continue;
+            
             var permission = permissions.FirstOrDefault(x => x.Inventory == CurrentInventory && x.User == user);
-            var p = permission == null ? "" : permission.Permission;
-            _displayList.Add(new DisplayModel
+            var displayPermission = permission == null ? "" : permission.Permission;
+            displayList.Add(new DisplayModel
             {
                 UserName = user.UserName ?? "",
                 Email = user.Email ?? "",
-                Permission = p,
+                Permission = displayPermission,
                 User = user
             });
         }
-        StateHasChanged();
+
+        return displayList;
     }
     
     private void ChangeState(ApplicationUser user)
@@ -114,37 +130,50 @@
 
     private async Task GivePermission()
     {
+        var permissions = await _dbContext.InventoryPermissions.ToListAsync();
+        
+        await ApplyPermisions(permissions);    
+        
+        await _dbContext.SaveChangesAsync();
+        _selectedUsers.Clear();
+        await LoadUsers();
+
+        
+    }
+    
+    private async Task ApplyPermisions(List<InventoryPermissions> inventoryPermissionsList)
+    {
         foreach (var user in _selectedUsers)
         {
-            var permission = await _dbContext.InventoryPermissions
-                .FirstOrDefaultAsync(x => x.Inventory == CurrentInventory && x.User == user);
+            var permission = inventoryPermissionsList.FirstOrDefault(x => x.Inventory == CurrentInventory && x.User == user);
             if (permission == null)
             {
-                var p = new InventoryPermissions
-                {
-                    Inventory =  CurrentInventory,
-                    User = user,
-                    Permission = Permissions.Write
-                };
-                _dbContext.InventoryPermissions.Add(p);
+                await _dbContext.InventoryPermissions.AddAsync(CreateNewPermission(user, Permissions.Write));
             }
             else
             {
                 permission.Permission = Permissions.Write;
             }
-            
         }
-        await _dbContext.SaveChangesAsync();
-        _selectedUsers.Clear();
-        await LoadUsers();
+    }
+
+    private InventoryPermissions CreateNewPermission(ApplicationUser user, string permissionString)
+    {
+        var permission = new InventoryPermissions
+        {
+            Inventory =  CurrentInventory,
+            User = user,
+            Permission = permissionString
+        };
+        return permission;
     }
 
     private async Task DeletePermission()
     {
+        var permissions = await _dbContext.InventoryPermissions.ToListAsync();
         foreach (var user in _selectedUsers)
         {
-            var permission = await _dbContext.InventoryPermissions
-                .FirstOrDefaultAsync(x => x.Inventory == CurrentInventory && x.User == user);
+            var permission = permissions.FirstOrDefault(x => x.Inventory == CurrentInventory && x.User == user);
             if (permission != null) _dbContext.InventoryPermissions.Remove(permission);
         }
         await _dbContext.SaveChangesAsync();

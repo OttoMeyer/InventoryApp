@@ -1,6 +1,5 @@
 ﻿@page "/InventoryManager/{InventoryId}"
 
-
 @using System.Security.Claims
 @using Microsoft.AspNetCore.Authorization
 
@@ -9,24 +8,19 @@
 @using Microsoft.AspNetCore.Identity
 @using InventoryApp.Data
 @using Microsoft.EntityFrameworkCore
-
+@using Radzen.Blazor
 
 @inject UserManager<ApplicationUser> UserManager
+@inject NavigationManager NavManager
 @inject AuthenticationStateProvider AuthStateProvider
 @inject InventoryPermissionManager PermissionManager
-@attribute [Authorize]
-
 
 <PageTitle>Inventory</PageTitle>
 
 <div class="card m-2">
     <h5 class="card-header">@_currentInventory.InventoryName</h5>
-    <div class="card-body" style="white-space: pre-wrap">
-        @_currentInventory.Description
-    </div>
+    <RadzenMarkdown>@_currentInventory.Description</RadzenMarkdown>
 </div>
-
-@_currentInventory.Description
 
 <TabControl>
     <TabPage Text="Items">
@@ -43,21 +37,18 @@
     }
 </TabControl>
 
-
-
 @code {
     [Parameter]
-    public String InventoryId { get; set; }
+    public String? InventoryId { get; set; }
 
     private bool _isOwner = false;
     private bool _isAdmin = false;
     
     private ApplicationUser? _appUser;
-    private string _permissionString;
     private Inventory _currentInventory = new Inventory();
+    private string _permissionString = "";
     
     private readonly ApplicationDbContext _dbContext;
-    
     
     [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
 
@@ -69,33 +60,40 @@
     protected override async Task OnInitializedAsync()
     {
         await LoadInventory();
-        
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-        _permissionString = await PermissionManager.GetPermissionAsync(_currentInventory, user);
-        _appUser = await UserManager.GetUserAsync(user);
-        
-        _isOwner = _currentInventory.OwnerID == _appUser.Id;
-        var roles = await UserManager.GetRolesAsync(_appUser);
-        _isAdmin = roles.Contains(Roles.Admin);
-
+        await LoadUserData();
     }
 
     bool CanEdit() => _permissionString == Permissions.Write || _isOwner || _isAdmin;
+
+    private async Task LoadUserData()
+    {
+        var user = await GetUserClaim();
+        _appUser = await UserManager.GetUserAsync(user);
+        await LoadUserPermissions(user);
+    }
+
+    private async Task<ClaimsPrincipal> GetUserClaim()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        return authState.User;
+    }
+
+    private async Task LoadUserPermissions(ClaimsPrincipal user)
+    {
+        if (_appUser == null) return;
+        
+        _isOwner = _currentInventory.OwnerID == _appUser.Id;
+        
+        _permissionString = await PermissionManager.GetPermissionAsync(_currentInventory, user);
+        
+        var roles = await UserManager.GetRolesAsync(_appUser);
+        _isAdmin = roles.Contains(Roles.Admin);
+    }
     
     private async Task LoadInventory()
     {
         _currentInventory = await _dbContext.Inventories.FirstOrDefaultAsync(x => x.InventoryID.ToString() == InventoryId);
+        if (_currentInventory == null) NavManager.NavigateTo("not-found");
         StateHasChanged();
     }
-
-    private sealed class DisplayModel
-    {
-        public Guid? ID { get; set; }
-        public string Owner { get; set; } = "";
-        public string Name { get; set; } = "";
-        public string Description { get; set; } = "";
-        public Inventory  ThisInventory { get; set; } = new Inventory();
-    }
-    
 } 

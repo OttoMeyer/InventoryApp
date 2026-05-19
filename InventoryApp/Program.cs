@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using InventoryApp.Components;
 using InventoryApp.Components.Account;
 using InventoryApp.Data;
+using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,6 +56,7 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
 
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+builder.Services.AddRadzenComponents();
 
 var app = builder.Build();
 
